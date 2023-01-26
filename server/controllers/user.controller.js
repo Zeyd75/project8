@@ -14,40 +14,35 @@ exports.signup = (req, res) => {
 
   //instance de user
   const user = new User(pseudo, email, password);
-  console.log(user);
 
   //chiffrement email
   const emailEncrypt = user.emailEncryption();
-  console.log(emailEncrypt);
 
   //hash du password
-  user.passwordHash().then((response) => {
-    console.log("-->response");
-    console.log(response);
-  });
+  user
+    .passwordHash()
+    .then((hash) => {
+      //data à envoyer dans la table users
+      const data = {
+        pseudo: pseudo,
+        email: emailEncrypt,
+        password: hash,
+      };
+      console.log("-->data");
+      console.log(data);
 
-  //hash du password
-  // bcrypt
-  //   .hash(password, 10)
-  //   .then((hash) => {
-  //     console.log(hash);
-
-  //     //données à envoyer à la db
-  //     const user = new User(pseudo, emailcrypt, hash);
-  //     console.log(user);
-
-  //     //requête permettant d'envoyer les datas à table 'users'
-  //     db.query("INSERT INTO users SET ?", user, (error, results) => {
-  //       if (error) {
-  //         console.log(error);
-  //         res.json({ error });
-  //       } else {
-  //         console.log(results);
-  //         res.json({ message: "user registered" });
-  //       }
-  //     });
-  //   })
-  //   .catch((error) => res.status(500).json({ error }).send(console.log(error)));
+      //requête permettant d'envoyer les datas à table 'users'
+      db.query("INSERT INTO users SET ?", data, (error, results) => {
+        if (error) {
+          console.log(error);
+          res.json({ error });
+        } else {
+          console.log(results);
+          res.json({ message: "user registered" });
+        }
+      });
+    })
+    .catch((error) => res.status(500).json({ error }).send(console.log(error)));
 };
 
 //########## LOGIN ##########
