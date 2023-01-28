@@ -1,7 +1,10 @@
-//imports
+//imports packages
 const express = require("express");
 const morgan = require("morgan");
+
+//imports routes
 const userRoutes = require("./routes/user.route");
+const userFileRoutes = require("./routes/userFile.route");
 
 //création d'une appli express
 const app = express();
@@ -32,6 +35,9 @@ app.use(express.urlencoded({ extended: true }));
 
 //route d'authentification
 app.use("/api/authentication", userRoutes);
+
+//route fiche user
+app.use("/api/user_file", userFileRoutes);
 
 //export de app.js pour y accéder à partir d'un autre fichier
 module.exports = app;

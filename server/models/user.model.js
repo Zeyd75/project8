@@ -5,6 +5,7 @@ const cryptojs = require("crypto-js");
 //imports fichiers
 const dotenv = require("dotenv").config({ path: "../config/.env" });
 
+//modèle table user
 class User {
   constructor(pseudo, email, password) {
     this.pseudo = pseudo;
