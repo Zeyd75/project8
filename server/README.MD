@@ -5,4 +5,7 @@ Pour lancer le serveur:
 
 Route signup: http://localhost:3000/api/authentication/signup
 Route login: http://localhost:3000/api/authentication/login
-Route user file: http://localhost:3000/api/user_file/create_user_file
+Route create user file: http://localhost:3000/api/user_file/
+Route get all: http://localhost:3000/api/user_file/
+Route get one: http://localhost:3000/api/user_file/:id
+Route put: http://localhost:3000/api/user_file/:id

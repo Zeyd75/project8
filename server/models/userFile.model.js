@@ -14,3 +14,5 @@ class UserFile {
     this.user_file_profilePic = user_file_profilePic;
   }
 }
+
+module.exports = UserFile;
