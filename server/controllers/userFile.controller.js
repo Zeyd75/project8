@@ -19,11 +19,11 @@ exports.create = (req, res) => {
   // })
 };
 
-//V160?
-exports.getAll = async (req, res) => {
+exports.getAll = (req, res) => {
   try {
-    const userFile = await db.query(
-      "SELECT * FROM `user_file` WHERE 1",
+    const userFile = db.query(
+      "SELECT * FROM `user_file` WHERE ?",
+      ["1"],
       (error, results) => {
         if (error) {
           res.json({ error });
