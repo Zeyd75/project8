@@ -12,9 +12,7 @@ const router = express.Router();
 //routes
 router.post("/", auth.userAuth, multer, userFile.create);
 router.get("/", auth.userAuth, userFile.getAll);
-
-//V161
-//router.get("/:id", auth.userAuth, userFile.getOne);
+router.get("/:id", auth.userAuth, userFile.getOne);
 
 //V162
 //router.put("/:id", auth.userAuth, userFile.update);

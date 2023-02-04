@@ -42,7 +42,7 @@ exports.userAuth = (req, res, next) => {
         throw "userId failed authentication";
       }
       //vérification via form-data (multer)
-    } else if (userIdParamsUrl === decodedToken) {
+    } else if (userIdParamsUrl == decodedToken) {
       next();
     } else {
       throw "form-data URL authentication error";

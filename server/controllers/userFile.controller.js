@@ -6,17 +6,23 @@ const UserFile = require("../models/userFile.model");
 const fs = require("fs");
 
 exports.create = (req, res) => {
-  console.log("#########");
-  console.log(req.body);
-  console.log("#########");
-  console.log(req.body.UserFile);
+  const userFileObject = JSON.parse(req.body.UserFile);
+  console.log("USERFILEOBJECT");
+  console.log(userFileObject);
 
-  const userFileObject = req.body.UserFile;
+  const { userId, lastName, firstName, age } = userFileObject;
+  const profilePicUrl = `${req.protocol}://${req.get("host")}/images/${
+    req.file.filename
+  }`;
 
-  //instance userFile (video MDB 159)
-  // const user_file = new userFile({
-  //   ...userFileObject
-  // })
+  //instance userFile
+  const user_file = new UserFile({
+    userId,
+    lastName,
+    firstName,
+    age,
+    profilePicUrl,
+  });
 };
 
 exports.getAll = (req, res) => {
@@ -37,13 +43,22 @@ exports.getAll = (req, res) => {
   }
 };
 
-//V161
-// exports.getOne = (req, res, next) => {
-// res.status(200).json({
-//   message: "ok",
-//   contenu: {_id : req.params.id},
-// });
-// }
+exports.getOne = (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const query = "SELECT * FROM user_file WHERE user_file_userId = ?";
+    const userFile = db.query(query, [id], (error, results) => {
+      if (error) {
+        res.json({ error });
+      } else {
+        res.status(200).json({ results });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
 
 //V162
 // exports.update = (req, res, next) => {
