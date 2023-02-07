@@ -28,17 +28,15 @@ exports.create = (req, res) => {
 
   //instance userFile
   const userFile = new UserFile(userId, lastName, firstName, age, profilePic);
-  console.log("CONTENU USERFILEZ+");
+  console.log("CONTENU USERFILE");
   console.log(userFile);
-  //REQUETE
-  //INSERT INTO `user_file`(`user_file_userId`, `user_file_lastName`, `user_file_firstName`, `user_file_age`, `user_file_profilePic`) VALUES (47,'Haigar','Zeyd',38 ,'zzz')
 
   try {
     const sqlInsert = `
-    INSERT INTO user_file(user_file_userId, user_file_lastName, user_file_firstName, user_file_age, user_file_profilePic) VALUES (47,'Haigar','Zeyd',38 ,'zzz')
+    INSERT INTO user_file(user_file_userId, user_file_lastName, user_file_firstName, user_file_age, user_file_profilePic) VALUES (?)
     `;
-    //const values = [];
-    const userFile = db.query(sqlInsert, (error, results) => {
+    const values = [userId, lastName, firstName, age, profilePic];
+    const userFile = db.query(sqlInsert, [values], (error, results) => {
       if (error) {
         res.json({ error });
       } else {
@@ -71,7 +69,7 @@ exports.getAll = (req, res) => {
 exports.getOne = (req, res) => {
   try {
     const id = req.params.id;
-    const query = "SELECT * FROM user_file WHERE user_file_userId = ?";
+    const query = "SELECT * FROM user_file WHERE id_user_file = ?";
     const userFile = db.query(query, [id], (error, results) => {
       if (error) {
         res.json({ error });
@@ -84,10 +82,30 @@ exports.getOne = (req, res) => {
   }
 };
 
-//V162
-// exports.update = (req, res, next) => {
+exports.update = (req, res) => {
+  console.log("ROUTE PUT: UPDATEONEFICHEUSER");
+  console.log(req.params.id);
 
-// }
+  console.log("CONTENU PUT: REQ.FILE");
+  console.log(req.file);
+
+  //Recherche de l'objet dans table user_file
+  try {
+    const id = req.params.id;
+    const sqlSelect = "SELECT * FROM user_file WHERE id_user_file = ?";
+
+    const userFile = db.query(sqlSelect, [id], (error, results) => {
+      if (error) {
+        res.json({ error });
+      } else {
+        console.log("SELECT DE L'OBJET A UPDATE");
+        console.log(results);
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
 
 //V163
 // exports.delete = (req, res, next) => {}

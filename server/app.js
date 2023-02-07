@@ -9,6 +9,9 @@ const userFileRoutes = require("./routes/userFile.route");
 //création d'une appli express
 const app = express();
 
+//import path
+const path = require("path");
+
 //import connexion db
 const mysql = require("./config/db/db.config");
 
@@ -38,6 +41,9 @@ app.use("/api/authentication", userRoutes);
 
 //route fiche user
 app.use("/api/user_file", userFileRoutes);
+
+//route dossier images
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 //export de app.js pour y accéder à partir d'un autre fichier
 module.exports = app;
