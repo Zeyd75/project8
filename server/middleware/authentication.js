@@ -7,42 +7,45 @@ exports.userAuth = (req, res, next) => {
   try {
     //récupération du token dans le headers authorization (bearer token)
     const token = req.headers.authorization.split(" ")[1];
-    console.log("TOKEEEEEN");
+    console.log("TOKEN");
     console.log(token);
 
     //décodage du token
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const decodedToken = jwt.verify(token, `${process.env.JWT_SECRET}`);
     console.log("DECODED TOKEN");
     console.log(decodedToken);
 
-    console.log("REQ.BODY");
-    console.log(req.body);
-
     //récupération du userId figurant dans le token décodé
     const userId = decodedToken.userId;
-    console.log("USER ID");
+    console.log("USERID");
     console.log(userId);
 
-    console.log("ORIGINALURL");
-    console.log(req.originalUrl);
+    console.log("----->userId dans le body de la request");
+    console.log(req.body.userId);
+
+    console.log("CONTENU Authentification du req.body");
+    console.log(req.body);
 
     //récupération de l'ID via l'URL
     userIdParamsUrl = req.originalUrl.split("=")[1];
+    console.log("REQ.ORIGINALURL");
+    console.log(req.originalUrl);
     console.log("USERIDPARAMSURL");
     console.log(userIdParamsUrl);
+    console.log("REQ._BODY");
+    console.log(req.body.userId);
 
     //comparaison du userId dans le req avec celui qui est dans le token
     if (req._body === true) {
+      console.log("REQ._BODY : TRUE");
       //vérification via body raw
-      console.log("----> REQ.BODY : TRUE");
       if (req.body.userId == userId) {
         next();
       } else {
-        console.log("ERROR AUTH BODY RAW");
         throw "userId failed authentication";
       }
       //vérification via form-data (multer)
-    } else if (userIdParamsUrl == decodedToken) {
+    } else if (userIdParamsUrl == userId) {
       next();
     } else {
       throw "form-data URL authentication error";
@@ -52,7 +55,5 @@ exports.userAuth = (req, res, next) => {
       message: "unidentified query",
       error: error,
     });
-    console.log("ERROOOOOR");
-    console.log(error);
   }
 };

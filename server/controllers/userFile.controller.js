@@ -4,25 +4,50 @@ const UserFile = require("../models/userFile.model");
 
 //imports packages
 const fs = require("fs");
+const { log } = require("console");
 
+//async/await ou pas?
 exports.create = (req, res) => {
-  const userFileObject = JSON.parse(req.body.UserFile);
-  console.log("USERFILEOBJECT");
+  const userFileObject = JSON.parse(req.body.userFile);
+  console.log("CONSTANTE FICHEOBJECT");
   console.log(userFileObject);
 
+  console.log("POUR FABRIQUER L'URL DE L'IMAGE");
+  console.log(req.protocol);
+  console.log(req.get("host"));
+  console.log(req.file.filename);
+
   const { userId, lastName, firstName, age } = userFileObject;
-  const profilePicUrl = `${req.protocol}://${req.get("host")}/images/${
+
+  const profilePic = `${req.protocol}://${req.get("host")}/images/${
     req.file.filename
   }`;
 
+  console.log("USERID, LASTNAME, FIRSTNAME, AGE, PROFILEPICURL");
+  console.log(userId, lastName, firstName, age, profilePic);
+
   //instance userFile
-  const user_file = new UserFile({
-    userId,
-    lastName,
-    firstName,
-    age,
-    profilePicUrl,
-  });
+  const userFile = new UserFile(userId, lastName, firstName, age, profilePic);
+  console.log("CONTENU USERFILEZ+");
+  console.log(userFile);
+  //REQUETE
+  //INSERT INTO `user_file`(`user_file_userId`, `user_file_lastName`, `user_file_firstName`, `user_file_age`, `user_file_profilePic`) VALUES (47,'Haigar','Zeyd',38 ,'zzz')
+
+  try {
+    const sqlInsert = `
+    INSERT INTO user_file(user_file_userId, user_file_lastName, user_file_firstName, user_file_age, user_file_profilePic) VALUES (47,'Haigar','Zeyd',38 ,'zzz')
+    `;
+    //const values = [];
+    const userFile = db.query(sqlInsert, (error, results) => {
+      if (error) {
+        res.json({ error });
+      } else {
+        res.status(200).json({ results });
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 
 exports.getAll = (req, res) => {
@@ -46,7 +71,6 @@ exports.getAll = (req, res) => {
 exports.getOne = (req, res) => {
   try {
     const id = req.params.id;
-
     const query = "SELECT * FROM user_file WHERE user_file_userId = ?";
     const userFile = db.query(query, [id], (error, results) => {
       if (error) {
