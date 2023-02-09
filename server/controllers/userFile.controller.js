@@ -211,5 +211,78 @@ WHERE
   }
 };
 
-//V163
-// exports.delete = (req, res, next) => {}
+exports.delete = (req, res) => {
+  try {
+    //récupération de l'id à supprimer
+    const id = req.params.id;
+    console.log("ID");
+    console.log(id);
+
+    const sqlSelect = "SELECT * FROM user_file WHERE id_user_file = ?";
+
+    db.query(sqlSelect, [id], (error, results) => {
+      if (error) {
+        res.json({ error });
+      } else {
+        console.log("SELECT DE L'OBJET A ERASE");
+        console.log(results);
+
+        //vérification dans la db de la présence de l'objet à supprimer
+        if (results != 0) {
+          console.log("objet présent");
+        } else {
+          console.log("objet non présent");
+          return res.status(404).json({ message: "no object to delete in db" });
+        }
+
+        //vérification de la modification par le bon userId
+        console.log("USERIDPARAMSURL ET USER_FILE_USERID");
+        console.log(userIdParamsUrl);
+        console.log(results[0].user_file_userId);
+
+        if (userIdParamsUrl == results[0].user_file_userId) {
+          console.log("AUTORISATION POUR ERASE OBJET");
+
+          //récupération de l'image à supprimer dans la db
+          const filename = results[0].user_file_profilePic.split("/images")[1];
+          console.log("FILENAME");
+          console.log(filename);
+
+          //suppression du fichier dans dossier images
+          fs.unlink(`images/${filename}`, (error) => {
+            if (error) throw error;
+          });
+
+          //mise à jour db
+          const sqlDelete = `DELETE FROM user_file
+          WHERE id_user_file = ?`;
+
+          const value = [id];
+          console.log("VALUE");
+          console.log(value);
+
+          //connexion db
+          db.query(sqlDelete, value, (error, results) => {
+            if (error) {
+              res.status(500).json({ error });
+            } else {
+              res
+                .status(201)
+                .json({ message: "user file erased in db", results });
+            }
+          });
+        } else {
+          console.log("PAS AUTORISÉ");
+          res
+            .status(403)
+            .json({ message: "you are not allowed to erase data" });
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error,
+      message: "image doesn't exist",
+    });
+  }
+};

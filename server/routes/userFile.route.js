@@ -13,11 +13,8 @@ const router = express.Router();
 router.post("/", auth.userAuth, multer, userFile.create);
 router.get("/", auth.userAuth, userFile.getAll);
 router.get("/:id", auth.userAuth, userFile.getOne);
-//!!!!!!!!!!!!!"multer" = NEW!!!!!!!!!!!!!!!!!!!
 router.put("/:id", auth.userAuth, multer, userFile.update);
-
-//V163
-// router.delete("/:id", auth.userAuth, userFile.delete);
+router.delete("/:id", auth.userAuth, userFile.delete);
 
 //export
 module.exports = router;
