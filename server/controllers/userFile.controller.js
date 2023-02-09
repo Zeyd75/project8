@@ -100,6 +100,51 @@ exports.update = (req, res) => {
       } else {
         console.log("SELECT DE L'OBJET A UPDATE");
         console.log(results);
+
+        //vérification de la modification par le bon userId
+        console.log("USERIDPARAMSURL ET USER_FILE_USERID");
+        console.log(userIdParamsUrl);
+        console.log(results[0].user_file_userId);
+
+        if (userIdParamsUrl == results[0].user_file_userId) {
+          console.log("AUTORISATION POUR MODIF OBJET");
+        }
+
+        //vérification de la présence d'une image à modifier
+        if (req.file) {
+          //récupération du nom du fichier à supprimer dans la db
+          const filename = results[0].user_file_profilePic.split("/images")[1];
+          console.log("FILENAME");
+          console.log(filename);
+        }
+
+        //suppression du fichier dans dossier images
+        // fs.unlink(`images/${filename}`, (error) => {
+        //   if (error) throw error;
+        // });
+
+        //objet mis à jour dans db
+        console.log("CONTENU REQ.BODY");
+        console.log(req.body);
+        console.log("CONTENU REQ.BODY.USERFILE");
+        console.log(req.body.userFile);
+
+        const userFileObject = JSON.parse(req.body.userFile);
+        console.log("CONTENU USERFILEOBJECT");
+        console.log(userFileObject);
+
+        //variables destinées à être utilisées pour envoi dans db
+        //deux cas possible avec et sans le fichier image
+        const profilePicObject = req.file
+          ? {
+              ...JSON.parse(req.body.userFile),
+              profilePic: `${req.protocol}://${req.get("host")}/images/${
+                req.file.filename
+              }`,
+            }
+          : { ...JSON.parse(req.body.userFile) };
+        console.log("PROFILEPICOBJECT");
+        console.log(profilePicObject);
       }
     });
   } catch (error) {
