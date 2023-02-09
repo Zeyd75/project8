@@ -116,12 +116,12 @@ exports.update = (req, res) => {
           const filename = results[0].user_file_profilePic.split("/images")[1];
           console.log("FILENAME");
           console.log(filename);
-        }
 
-        //suppression du fichier dans dossier images
-        // fs.unlink(`images/${filename}`, (error) => {
-        //   if (error) throw error;
-        // });
+          //suppression du fichier dans dossier images
+          fs.unlink(`images/${filename}`, (error) => {
+            if (error) throw error;
+          });
+        }
 
         //objet mis à jour dans db
         console.log("CONTENU REQ.BODY");
@@ -135,7 +135,7 @@ exports.update = (req, res) => {
 
         //variables destinées à être utilisées pour envoi dans db
         //deux cas possible avec et sans le fichier image
-        const profilePicObject = req.file
+        const userData = req.file
           ? {
               ...JSON.parse(req.body.userFile),
               profilePic: `${req.protocol}://${req.get("host")}/images/${
@@ -143,8 +143,61 @@ exports.update = (req, res) => {
               }`,
             }
           : { ...JSON.parse(req.body.userFile) };
-        console.log("PROFILEPICOBJECT");
-        console.log(profilePicObject);
+        console.log("USERDATA");
+        console.log(userData);
+
+        //update de la db
+
+        /*
+        UPDATE
+    `user_file`
+SET
+    `user_file_lastName` = 'Lloris',
+    `user_file_firstName` = 'Hugo',
+    `user_file_age` = '36',
+    `user_file_profilePic` = 'ugololo'
+WHERE
+    `id_user_file` = 15
+        */
+        const { userId, lastName, firstName, age, profilePic } = userData;
+        console.log(
+          "CONSOLE LOG DE CA: userId, lastName, firstName, age, profilePic"
+        );
+        console.log(userId, lastName, firstName, age, profilePic);
+
+        sqlUpdate = req.file
+          ? `
+        UPDATE user_file SET
+        user_file_lastName = ?,
+        user_file_firstName = ?,
+        user_file_age = ?,
+        user_file_profilePic = ?
+        WHERE id_user_file = ?
+        `
+          : `
+        UPDATE user_file SET
+        user_file_lastName = ?,
+        user_file_firstName = ?,
+        user_file_age = ?
+        WHERE id_user_file = ?
+        `;
+
+        const values = req.file
+          ? [lastName, firstName, age, profilePic, id]
+          : [lastName, firstName, age, id];
+
+        console.log("VALUES");
+        console.log(values);
+
+        db.query(sqlUpdate, values, (error, results) => {
+          if (error) {
+            res.status(500).json({ error });
+          } else {
+            res
+              .status(201)
+              .json({ message: "user file updated in db", results });
+          }
+        });
       }
     });
   } catch (error) {
