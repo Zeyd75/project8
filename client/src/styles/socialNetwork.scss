@@ -1,0 +1,13 @@
+.social-networks-container {
+  ul {
+    display: flex;
+    justify-content: center;
+  }
+  li {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  i {
+    font-size: 5rem;
+  }
+}

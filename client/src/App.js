@@ -1,10 +1,11 @@
 import Header from "./components/Header";
+import SocialNetworks from "./components/SocialNetworks";
 
 function App() {
   return (
     <div className="App">
-      YO
       <Header />
+      <SocialNetworks />
     </div>
   );
 }
